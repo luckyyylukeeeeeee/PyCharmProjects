@@ -5,11 +5,26 @@ from courseRegFile import CourseRegistration, create_registration_objects
 student_objects = create_student_objects()
 course_objects = create_course_objects()
 registration_objects = create_registration_objects()
-for student in student_objects:
+
+"""for student in student_objects:
     student.print_info()
 for course in course_objects:
     course.print_info()
-print(registration_objects)
+print(registration_objects)"""
+
+all_students = {}
+for each_reg_course in registration_objects:
+    for students in student_objects:
+        if students.student_id == each_reg_course.student_id:
+            if students.name not in all_students:
+                all_students[students.name] = []
+            for courses in course_objects:
+                if courses.course_id == each_reg_course.course_id:
+                    all_students[students.name].append(courses)
+
+for each_course in all_students["Alice"]:
+    each_course.print_info()
+
 
 
 """for each_student in student_objects:
@@ -17,11 +32,7 @@ print(registration_objects)
 
 for each_course in course_objects:
     if each_course.course_id==registration_objects.course_id:
-    
-    
-    { Alice:[6,7,9,10,5]
-    for each coruser in courses[Alice]
-     """
+"""
 
-def
+
 
