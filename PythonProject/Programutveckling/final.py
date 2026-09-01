@@ -6,11 +6,10 @@ student_objects = create_student_objects()
 course_objects = create_course_objects()
 registration_objects = create_registration_objects()
 
-"""for student in student_objects:
-    student.print_info()
-for course in course_objects:
-    course.print_info()
-print(registration_objects)"""
+
+total_amount_of_course_points = 0
+for each_course in course_objects:
+    total_amount_of_course_points += each_course.hp
 
 all_students = {}
 
@@ -24,21 +23,21 @@ for each_reg_course in registration_objects:
                 if courses.course_id == each_reg_course.course_id:
                     all_students[students.name].append(courses)
 
-print(all_students)
+student_points = {}
 for students in student_objects:
+    tot_course_points = 0
     for each_course in all_students[students.name]:
-        each_course.print_info()
+        tot_course_points += each_course.hp
+    student_points[students.name] = tot_course_points
+for students in student_points:
+    print(students, student_points[students])
 
+total_courses_cleared = {}
 
+for each_student in student_points:
+    c = (student_points[each_student] / total_amount_of_course_points) * 100
+    total_courses_cleared[each_student] = f"{c:.0f}%"
 
-
-
-"""for each_student in student_objects:
-    if each_student.course_id==registration_objects.student_id:
-
-for each_course in course_objects:
-    if each_course.course_id==registration_objects.course_id:
-"""
-
-
+for student in total_courses_cleared:
+    print(student, total_courses_cleared[student])
 

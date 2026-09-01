@@ -8,7 +8,7 @@ def get_students():
     return [{"student_id": r[0], "name": r[1]} for r in students_rows]
 
 student_list = get_students()
-print(student_list)
+#print(student_list)
 class Student:
     def __init__(self, student_id, name):
         self.student_id = student_id
