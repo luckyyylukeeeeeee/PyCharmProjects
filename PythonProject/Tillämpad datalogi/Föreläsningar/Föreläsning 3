@@ -1,0 +1,56 @@
+-------------------------------------------------------------
+Föreläsning 3: Algoritmer, Datastrukturer och Tidskomplexitet
+-------------------------------------------------------------
+Algortimer kan ha olika tidskomplexitet dvs hur lång tid det tar för en algoritm att nå sin output
+Tidsfunktion T(n) som anger körtid för n indata (n=antal indata)
+
+Defintion:
+--------------------------------------------------------------------------------------------------------
+|T(n) är Ordo(F(n)) om det finns c och n(0) där bägge är > 0 sådan att 0 <= T(n) <= cF(n) för n > n(0) |
+|Här är c någon form av övrebesgränsning                                                               |
+--------------------------------------------------------------------------------------------------------
+
+
+Sökning
+* Vi söker efter något i en lista med n element
+* Det element vi söker efter karaktirseras av en söknykel (eng key) men kan också ha andra data
+* Vad ska hända om det sökta elementet inte finns med?
+* Kan det finnas flera element som har samma nyckel, exempelvis filmer från k-drama med samma skådespelare
+
+Linjärsökning (Sequential search
+1.) Går igenom varje element i listam:
+    Jämför med nyckel, och returnera True om dom är like
+2.) Returnerar False om hela listan gåtts igenom utan element har hittats
+Linjärsöning är Ordo(n) (värsta fallet är att algoritmen måste gå igenom alla n element)
+
+Vi söker bland n element:
+n/2 element andra varvet
+n/4 element
+n/2^x = 1 för n = element och x = antal sökningar (varv man har gått för sökningrn)
+n = 2^x
+x = log(2)(n)
+Tidskomplexiteten blir då Ordo(log(2)(n))
+
+-----------------------------------------
+| def binary_search(the_list,key):      |
+|    low = 0 #Under begränsningen       |
+|    high = len(the_list)-1             | #Pga indexeringen börjar på 0 därav - 1
+|    found = False                      |
+|                                       |
+|    while low <= high and not found:   |
+|        middle = (low + high)//2       |
+|        if the_list[middle]== key:     |
+|            found = True               |
+|        else:                          |
+|            if key < the_list[middle]  |
+|                high = middle - 1      | #Om key är mindre än elementet i mitten så måste det ligga till vänster eller höger i listan.
+|            else:                      | #Men du vet redan att middle inte är rätt (eftersom du testade det), så du kan hoppa över det.
+|                low = middle + 1       | #Alltså kan du hoppa över middle och ta + eller - middle för att inte inkludera middle i sökningen
+|    return found                       |
+-----------------------------------------
+
+******** Rekursiv ********
+Rekuriv kod använder sig själv i själva anvädningen, dvs en funktion som anropar sig själv. Exempelvis:
+def search(list)
+middle = len(list)//2
+return search([middle:]) <--- Säger åt att göra en ny lista av samma lista men endast bara the övre halvan utifrån middle

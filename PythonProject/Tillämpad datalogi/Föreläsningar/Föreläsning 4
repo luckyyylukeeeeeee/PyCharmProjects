@@ -1,0 +1,130 @@
+---------------------------------------------
+Föreläsning 4: Binära träd och allmänna träd
+---------------------------------------------
+
+För ett allmän träd gäller en annan struktur:
+------------------------------
+Class Node():
+    def __innit__(self,data):
+        self.data = data
+        self.right = None
+        self.down = None
+------------------------------
+
+Ett exempel på ett allmänt träd är:
+
+Intrument
+    ↓
+    Blås   →   Stråk   →   Slag
+    ↓           ↓           ↓
+    Trä         Fiol        Trumma
+    Bleck       Cello       Bas
+
+**** Defintion av Begrepp för binära sökträd ****
+
+Noder → Är de objekt som trädet är uppbyggt av. De innehåller data och pekare.
+Rot → Är den översta noden i trädet. Den pekas inte ut av någon annan nod.
+Barn → Är till en nod är de som pekas ut av noden.
+Förälder → Är noden ovanför i trädet.
+Syskon → Har samma förälder. Dvs left och right är syskon om dom kommer från samma föräldrar, huvudnod
+Löv → Är en nod vars bägge pekare är None. Trädet forsätter inte den tar slut ej pekar på något mer.
+Delträd → Definieras så här: En godtycklig nod i trädet kan ses som en rot, och den ,tillsammans med alla noder under den (barn, barnbarn osv.) bildar ett delträd.
+Nivå → Är det antal steg från roten noden befinner sig. Roten är på nivå noll.
+Höjd → Är den maximala nivån som nån av trädets noder befinner sig på.
+Balanserat → Är binärträdet om skillnaden i höjd mellan höger och vänster delträd till varje nod är noll eller ett.
+Fullt → Är binärträdet om alla noder utom löven har exakt två barn, och alla löv är på samma nivå.
+
+        **** Exempel ****
+
+ 0             4711 ← "Roten" , "Höjden" = 2
+             ↙    ↘
+ 1    "Barn" 17.    9999 "Löv"
+         ↙  ↘
+ 2     1    666
+
+"Balanserat" = Trädet är balanserat eftersom att skillnaden i höjd är 0 eller 1 på varje delträd
+"Fullt" = Trädet är inte fullt eftersom vänstra grenen har fler grenar än den högra
+
+
+Ordningen som gäller är mindre till vänster och större till höger
+                Rot
+                 ↓
+                122
+             ↙       ↘
+            12          429
+              ↘        ↙   ↘
+               56    150   666
+
+Används för att söka och byggs upp på följande sett:
+------------------------------
+Class Node():
+    def __innit__(self,data):
+        self.data = data
+        self.left = None
+        self.right = None
+------------------------------
+
+****** Rekursion ******
+Rekursion betyder att en funktion anropar sig själv för att lösa ett problem.
+Man delar upp problemet i mindre delar, och till slut når man ett basfall (ett enkelt fall som går att lösa direkt).
+
+En rekursiv funktion har alltså två delar:
+
+1.) Basfall – stoppar rekursionen (annars blir det en oändlig loop).
+
+2.) Rekursivt fall – funktionen anropar sig själv för att lösa en mindre del av problemet.
+
+------------------------------------------------
+def countdown(n):
+    if n == 0:               # Basfall
+        print("Klart!")
+    else:                    # Rekursivt fall
+        print(n)
+        countdown(n-1)       # Anropa sig själv
+
+countdown(5)
+------------------------------------------------
+
+
+Hur du söker i det binära trädet:
+----------------------------------------------------------------
+   def finns(p,value):
+        letar = True # Antar att det man söker efter ska finnas
+        while letar:
+            if p == None:
+                return False
+            if value == p.value:
+                return True
+            if value < p.value:
+                p = p.left
+            if value > p.value:
+----------------------------------------------------------------
+
+Fråga: Hur många noder finns i binärträdet?
+Rekursivt svar: En nod mer än i vänsterträdet och högerträdet tillsammans
+Basfall: Ett tomt träd har noll noder.
+-----------------------------------------------------
+    def antal(p): # p är roten dvs det första i trädet
+        if p == None:
+            return 0
+        else:
+            return 1 + antal(p.left) + antal(p.right) #Går tillbaka till sig själv för att hitta alla
+-----------------------------------------------------
+
+Hur skriver du inte binära träd:
+Om man ska skriva ut alla talen i trädet vill man oftast göra det i så kallad inordning (eng. inorder), dvs från vänster till höger.
+Fråga: Hur skriver man ut trädet i inordning?
+Rekursivt svar: Först skriver man ut vänsterträdet, sedan rottalet, sist högerträdet.
+Basfall: Ett tomt träd skriver man inte ut.
+
+
+Följande funktion gör att write(root) skriver ut 1 17 666 4711 9999 för vårt träd.
+----------------------------
+    def inorder(p):
+        if p != None:
+            inorder(p.left)
+            print(p.value)
+-----------------------------------------------------
+
+
+

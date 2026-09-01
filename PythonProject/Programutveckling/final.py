@@ -13,17 +13,23 @@ for course in course_objects:
 print(registration_objects)"""
 
 all_students = {}
+
+for students in student_objects:
+    all_students[students.name] = []
+
 for each_reg_course in registration_objects:
     for students in student_objects:
         if students.student_id == each_reg_course.student_id:
-            if students.name not in all_students:
-                all_students[students.name] = []
             for courses in course_objects:
                 if courses.course_id == each_reg_course.course_id:
                     all_students[students.name].append(courses)
 
-for each_course in all_students["Alice"]:
-    each_course.print_info()
+print(all_students)
+for students in student_objects:
+    for each_course in all_students[students.name]:
+        each_course.print_info()
+
+
 
 
 

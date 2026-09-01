@@ -1,0 +1,197 @@
+------------------------
+Föreläsning 8: Sortering
+------------------------
+I listor i pyhton kan man sortera på olika sätt. Du kan sortera efter namn (bokstavsordning), på år (int) eller betyg (float)
+Dessa attributen som man ska sortera på kalla för "key/nyckel".
+
+*** Urvalssortering (Selection sort) ***
+Vi tänker oss att vi ska sortera en lista med n tal.
+
+Algoritm:
+För varje element i i listan:
+
+Börja med att anta att det minsta elementet ligger på plats i (spara det som minst-index)
+Gå igenom elementen i+1 till n:
+Jämför värdet på aktuellt index med värdet på minst-index, och spara index för det minsta värdet
+Byt plats på det minsta elementet och element i
+
+Tidskomplexiteten för en sortering baseras alltid på hur många jämförelser som görs dvs n antal jmrf
+Total krävs n(n-1)/2 jämförelser för urvalssorteringen
+Det är också viktigt att bestämma VAD man ska sortera efter, årtal, namn, tids med milisekunder osv
+
+Exempel på urvalssortering:
+---------------------------------------------------------
+|  def urvalssortera(data):                             |
+|        n = len(data)                                  |
+|        for i in range(n):                             |
+|            minst = i                                  |
+|            for j in range(i+1,n):                     |
+|                if data[j] < data[minst]:              |
+|                    minst = j                          |
+|            data[minst],data[i] = data[i], data[minst] |
+---------------------------------------------------------
+*** För denna del 'data[minst],data[i] = data[i], data[minst]' ***
+Vänster sida (målet)	Höger sida (värdet som tilldelas)
+data[minst]              data[i]
+data[i]                  data[minst]
+"Man gör det här för att byta plats på två värden i en lista utan att behöva en temporär variabel."
+Spelar ingen roll vilken ordning!!
+------------------------------------------------
+|       lista = [7,3,1]                        |
+|                                              |
+|       lista[2],lista[0] = lista[0],lista[2]  |
+|       print(lista)                           |
+|        Output --> [1,3,7]                    |
+------------------------------------------------
+
+*** Insättningssortering (Insertion sort) ***
+Denna metod känns särskilt naturlig om man får värden ett efter ett (t ex om dom läses in från en fil) och man vill sortera in dom i en lista.
+Exmpelvis du får första talet 3, sen talet 7 sen talet 4, sen talet 9 osv
+
+Här sorterar vi in ett värde i taget på följande vis:
+1.) Jämför med varje tidigare värde i listan. (Börja till vänster och gå tur och ordningen)
+2.) Om det nya värdet är mindre gör vi plats genom att flytta det tidigare värdet ett snäpp åt höger.
+3.) Flytta fram så många värden som behövs för att sätta in nya värdet på rätt plats.
+4.) Stoppa in det nya värdet.
+5.) Detta görs till exempelvis stroleksordning vänster (minst) höger (störst) tills ordningen är klar
+Om alla värden redan finns i listan sorterar vi in ett värde i taget, med början från det andra.
+
+Komplexiteten är i allmänhet O(n^2) men den är lite snabbare än urvalssortering i praktiken eftersom en flytt är snabbare än ett byte.
+För att sortera in ett nytt värde i en redan sorterad lista är insättning bäst.
+
+--------------------------------------------------------------
+|    def insattningssortera(data):                           |
+|        n = len(data)                                       |
+|        for i in range(1, n):                               |
+|            varde = data[i]                                 |
+|            plats = i                                       |
+|            while plats > 0 and data[plats-1] > varde:      |
+|                data[plats] = data[plats-1]                 |
+|                plats = plats - 1                           |
+--------------------------------------------------------------
+
+*** Damerna först sortering ***
+Den enklaste sorteringsuppgiften är att sortera om en personlista med damerna först och den smarta algoritmen kallas damerna-först-sortering.
+
+1.) Sätt ett pekfinger i var ände av listan!
+2.) Rör fingrarna mot varandra tills vänstra fingret fastnat på en herre och högra fingret på en dam!
+3.) Låt damen och herren byta plats!
+4.) Upprepa från 2 tills fingrarna korsats!
+
+-----------------------------------------------------------------------------------------
+|        def damernaförst(data):                                                        |
+|             vänster = 0          # Första fingret index 0                             |
+|             höger = len(data)-1  # Andra fingret index längd - 1                      |
+|             while vänster < höger:                                                    |
+|                while data[vänster] == "D" and vänster < höger:                        |
+|                     vänster = vänster + 1  # Så fort vänster == D kliv fram ett steg  |
+|                while data[höger] == "H" and vänster < höger:                          |
+|                     höger = höger - 1        # Så fort höger == D kliv fram ett steg  |
+|                data[vänster], data[höger] = data[höger], data[vänster]                |
+-----------------------------------------------------------------------------------------
+
+*** Quicksort ***
+Att sortera upp i två delar använder sig sorteringsmetoden quicksort.
+Damerna-först-algoritmen med två pekfingrar används i Quicksort.
+Först bestämmer man vilka (små) nyckelvärden som ska kallas damer.
+Resten kallas herrar och så utför man algoritmen.
+Listan delas alltså i två segment, det första med små värden, det andra med stora värden.
+Nu behöver man bara sortera segmenten var för sej. Det här är en rekursiv tanke!
+
+Man väljer exmpelvis att dela upp det i ett tal att alla värder mindre än 37 är ena segmentet och alla över 37 är andra segmentet!
+1.) Bestäm vilka värden som ska kallas damer.
+2.) Partitionera listan så att damerna kommer först.
+3.) Sortera varje segment för sej.
+
+----------------------------------------------------------------------------------------------------------------------------------------
+def quicksort(data):
+    sista = len(data) - 1
+    qsort(data, 0, sista)
+
+def qsort(data, low, high):
+    pivotindex = (low+high)//2  # Säger att det element som är mitten elementet i listan
+    # flytta pivot till kanten.
+    data[pivotindex], data[high] = data[high], data[pivotindex]  # Lägger elementet längst till höger (high)
+
+    # damerna först med avseende på pivotdata
+    pivotmid = partitionera(data, low-1, high, data[high])  # Returnersr indexet till där elementet hör hemma, rätt plats för elementet
+
+    data[pivotmid], data[high] = data[high], data[pivotmid]  # Flytta tillbaka pivot
+
+    if pivotmid-low > 1:
+        qsort(data, low, pivotmid-1)
+    if high-pivotmid > 1:
+        qsort(data, pivotmid+1, high)
+
+def partitionera(data, v, h, pivot):
+    söker = True
+    while söker:
+        v = v + 1
+        while data[v] < pivot:
+            v = v + 1
+        h = h - 1
+        while h != 0 and data[h] > pivot:
+            h = h - 1
+        data[v], data[h] = data[h], data[v]
+        if v >= h:
+            break
+    data[v], data[h] = data[h], data[v]
+    return v
+----------------------------------------------------------------------------------------------------------------------------------------
+
+*** Merge Sort ***
+Om man har flera sorterade småfiler är det lätt att samsortera dom till en fil.
+Det här kan man också göra med en lista om man har extrautrymme för att kopiera den till två andra hälften så långa listor. Det här ger en rekursiv tanke!
+
+1.) Dela listan i två hälften så långa listor.
+2.) Sortera varje halva för sej.
+3.) Samsortera till ursprungliga listan.
+
+Komplexiteten blir O(n*log(n)), lika snabb som quicksort men kräver extra minnesutrymme.
+Om första halvan av listan a ska samsorteras med andra halvan kopierar man först över allting till hjälplistan b och sorterar sedan tillbaka från b till a.
+Detta förfarande kallas merge och programmeras lämpligen som en egen metod.
+
+def mergesort(data):
+    if len(data) > 1:
+        mitten = len(data)//2
+        vensterHalva = data[:mitten] # Kopia från början till mitten elementet
+        hogerHalva = data[mitten:]   # Kopia från mitten elementet till slutet
+
+        mergesort(vensterHalva)
+        mergesort(hogerHalva)
+
+        i, j, k = 0, 0, 0
+        # i → nuvarande element i vänsterhalvan
+        # j → nuvarande element i högerhalvan
+        # k → nuvarande position i originallistan data där vi placerar nästa element
+
+        # Denna slingan tar hand om mergen
+        while i < len(vensterHalva) and j < len(hogerHalva):
+            if vensterHalva[i] < hogerHalva[j]:
+                data[k] = vensterHalva[i]
+                i = i + 1
+            else:
+                data[k] = hogerHalva[j]
+                j = j + 1
+            k = k + 1
+
+        while i < len(vensterHalva):
+            data[k] = vensterHalva[i]
+            i = i + 1
+            k = k + 1
+
+        while j < len(hogerHalva):
+            data[k] = hogerHalva[j]
+            j = j + 1
+            k = k + 1
+
+*** Räknesortering (Distribution count) ***
+Om man vet att det bara finns ett litet antal nyckelvärden, (t ex om man ska sortera Sveriges befolkning efter födelseår), så är distributionsräkning oslagbart snabbt. Det kräver att talen som sorteras in i listan hämtas från en annan lista eller fil.
+
+1.) Läs igenom filen och räkna hur många det finns av varje nyckelvärde.
+2.) Dela in listan i lagom stora segment för denna distribution.
+3.) Läs filen igen och lägg in varje värde i sitt segment.
+
+före 	3	4	3	3	5	3	5	3	5	4	5	3	4
+        plats för sex 3:or	    tre 4:or	    fyra 5:or
+mitt i	    3	3	3				4

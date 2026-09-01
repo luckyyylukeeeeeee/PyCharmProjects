@@ -1,0 +1,45 @@
+-----------------------------
+Föreläsning 7: Prioritetsköer
+-----------------------------
+Det som har högst prioritet kommer ut först ex. dom som har köat längst kommer inte in/ut först
+
+---- Prioritetskö ----
+1.) Stoppa in put(x,p) där x = värdet/objekt, p = prioritet
+2.) Plocka ut - den största (högst prioritet) --> kommer ut del(max())
+3.) Koll om tom isEmpty()
+
+* En s.k 'heap' är ett sätt att implementera en prioritetskö, kön heter 'tab':
+-----------------------------------------
+|     A   B   C   D   E   F   G   H     |
+|    [0] [1] [2] [3] [4] [5] [6] [7]    |
+-----------------------------------------
+Barnen till tab[1] ligger på platserna tab[2] och tab[3]
+Barnen till tab[2] ligger på platserna tab[4] och tab[5]
+Generallt: Barnen till tab[k] på [2k] och [2k + 1]
+
+
+"Tänkt träd" (detta görs för att hålla koll på en ordning INTE eg ett träd):
+Här kan vi säga att ordningen basera på att - Först i alfabetet är bäst -
+        A           0
+     B     C        1
+   D   E  F   G     2
+ H                  3
+
+ Heapvillkor: Föräldern är bättre än barnet dvs den har ALLTID högre prioritet
+ Vänster och höger ordningen som finns i binärträd, detta gäller ej här pga
+ föräldrar kommer alltid vara bättre än barnet (Desto högre nivå desto högre prioritet)
+ OBS det är ENDAST jämförelser mellan nivån och nivå dvs förälder och barn. Allt på samma nivå har redan
+ samma prioritet dom skiljer säg åt mellan vänster och höger.
+
+ --- insert() ---
+ Ett nytt värde läggs alltid in sist i heapen.
+ Om heapvillkoret inte blir uppfyllt, dvs om det är större än sin förälder,
+ byter förälder och barn plats och så fortgår det tills villkoret uppfyllts.
+ Det här kallas upheap (upptrappning) och kan i värsta fall föra det nya värdet hela vägen upp till toppen,
+ alltså tab[1] i exmplet ovan.
+
+ --- delMax() ---
+Man plockar alltid ut det översta talet ur heapen och fyller igen tomrummet med det sista talet i heapen.
+Då är inte heapvillkoret uppfyllt, så man får byta talet och dess största barn.
+Denna downheap (nedtrappning) upprepas tills villkoret åter gäller.
+Både insert och delMax har komplexitet O(log n) om heapen har n element.

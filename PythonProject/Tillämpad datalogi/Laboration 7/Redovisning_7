@@ -1,0 +1,15 @@
+-- Motivering varför hashning ger snabb sökning ---
+- Hashning ger snabb sökning eftersom den beräknar direkt var ett objekt ligger —
+utan att behöva gå igenom hela datamängden. Därav har den tidskomplexitet O(1).
+
+-- Motivering av Hashfunktionen ---
+- Antal objekt du räknar med: n.
+1.) Välj primtal lite större än n.
+2.) T.ex. om du har 12 K-dramas → primtal nära 12 är 13, 17, 19, 23, 29…
+3.) Vi vill också ha 50% luft alltså är en bra size 29
+
+-- Motivering av hashfunktion --
+1.) Normalisering (strip().lower()) → samma key hashas alltid lika.
+2.) result = result * 32 + ord(c) → Det är av bas 2^n vilket är bra för en dator → Gånger och plus ger oxå bra fördelning
+3.) Genom att använda oss av hashvärde % self.size så sprids indexen ut jämnt över tabellen
+Då sprids objekten jämnt över tabellen och sökningen och inlägningen blir effektiv.

@@ -1,0 +1,9 @@
+import csv
+
+"""read_all = csv.reader(file, delimiter=",", quotechar='"')"""
+#1. reader - När du loopar över reader får du varje rad som en lista, en rad i CSV = en lista med strängar
+# Om du vill spara raderna för senare användning måste du explicit lägga dem i en lista med t.ex append.
+
+#2. delimiter - Är ett argument som talar om vilket tecken som används för att separera raderna i CSV filen.
+
+#3. quotechar='"' - Gör att text med kommatecken inuti citattecken förblir ett fält och inte delas upp i kolumner

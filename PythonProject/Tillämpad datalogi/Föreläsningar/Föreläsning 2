@@ -1,0 +1,157 @@
+-----------------------------------
+Föreläsning 2: Abstrakta datatyper
+-----------------------------------
+Abstraktion innebär att dölja detaljer, en användare behöver inte känna till detaljer för att kunna uttnytja en datastruktur
+eller algoritm och en konstruktör behöver inte vet var informatiionen kommer ifrån för att kunna uttnyttja den.
+Man behöver inte exakt vet för att utföra operationerna, detta gäller även i Pyhton.
+
+En abstrakt datatyp anger inte lagringsättet och specificierar inte heller operationer för åtkomst eller ändring.
+
+***** Abstrakt kö ******
+En kö fungerar som att man ska förvänta sig, dvs det man stoppar in först är det som tas ut först
+För en abstrakt kö finns följande operationer:
+
+* from queue import Queue ---> q = Queue()
+* q.put(x) ---> Stoppar in 'x' sist i kön (ENDA sättet att stoppa in i kön)
+* q.get(x) ---> Plockar ut och returnerar det som står först i kön (ENDA sättet att plocka ur kön)
+* q.empty ----> Undersök om kön är tom
+* q.size ----> Undersöka hur många element som finns i kön
+Detta ska användas för laboration 2 och ett annat exempel är hur köer till skrivare hanteras
+
+*****************************************************************************************************************
+
+****** Abstrakt stack ******
+Fungerar som en trave tallrikar - det man lägger överest på stacken är ALLTID det som kommer tas bort först, du kan ej ändra på ordningen tallrikar
+[A] --> Du kan endast alltid lägga överst i stacken och alltid endast ta bort från överest i stacken, detta görs med .pop
+[B]
+[C]
+
+* from stack import Stack ---> st = Stack()
+* st.push(x) ---> Lägger x överst i stacken
+* st.pop(x): ---> Plocka ut och returnerar det som ligger överst i stacken
+* isEmpty(): ----> Undersök om stacken är tom
+
+
+-EXEMPEL-
+När vaccinet anländer till vårdcentralen bildas en lång kö utanför av folk som vill bli vaccinerade.
+Syster Maud inser att vaccinet inte kommer att räcka till alla och ser att många i början av kön är unga och friska.
+Hon tror att dom som är i minst behov av vaccination hamnat först (dom sprang snabbast).
+Hon vill se till att personer som är 65 eller äldre vaccineras först. Hur ska hon göra? Nedanför är txt filen:
+ -------------------
+ | Usain 29        |
+ | Annegret 65     |
+ | Stanislawa 104  |
+ | Frankie 47      |
+ | Inge 74         |
+ -------------------
+
+Yngre måste tillfälligt läggas i ett förvaringsutrymme medan filen läses igenom, till exempel i en stack.
+Man lägger ett objekt på stacken med anropet push(p) och man hämtar ett objekt från stacken med p = pop().
+Algortimen för problemet:
+1. Skapa en tom stack
+2. Öppna filen
+3. För varje patient i filen:
+    Om pationeten ör yngre än 65
+        Pusha patienten på stacken
+    Annars:
+            Vaccinera
+4. När filen är genomläst, så länge stacken inte är tom:
+    poppa element ur stacken
+    vaccinera
+
+--------------------------------------------------------------------
+|    from stack import Stack                                       |
+|                                                                  |
+|    class Patient:                                                |
+|                                                                  |
+|       def __init__(self, namn, ålder):                           |
+|           self.namn = namn                                       |
+|           self.ålder = int(ålder)                                |
+|                                                                  |
+|       def __str__(self):                                         |
+|           return self.namn + " " + str(self.ålder) + " år"       |
+|                                                                  |
+|     def main():                                                  |
+|        korridor = Stack()                                        |
+|        with open("patienter.txt", encoding = "utf8") as register:|
+|           for rad in register:                                   |
+|              lista = rad.split()                                 |
+|              namn = lista[0]                                     |
+|              ålder = lista[1]                                    |
+|              p = Patient(namn, ålder)                            |
+|              if p.ålder < 65:                                    |
+|                 korridor.push(p)                                 |
+|              else:                                               |
+|                 print("Vaccinerar:", p)                          |
+|                                                                  |
+|        print("Om vi hinner tar vi också: ")                      |
+|        while not korridor.isEmpty():                             |
+|           p = korridor.pop()                                     |
+|           print("\t", p)                                         |
+|                                                                  |
+|     main()                                                       |
+--------------------------------------------------------------------
+************************************************************************
+
+***** Abstrakt deque *******
+Deque (double-ended queue)
+
+För en abstrakt deque finns följande operationer:
+* addFront(x) ----> Lägg in x först.
+* addRear(x) ----> Lägg in x sist.
+* x = removeFront() ----> Plocka ut och returnera det som ligger först.
+* x = removeRear() ----> Plocka ut och returnera det som ligger sist.
+* isEmpty() ---->Undersök om dequen är tom.
+
+************************************************************************
+
+****** Länkade listor *******
+--------------------------------------------------------------------------------------------------------------------------
+|En länkad lista består av ett antal objekt, noder som är sammanlänkade genom att varje nod refererar till nästa nod.    |
+|Dessa referenser kallas ofta next-pekare.                                                                               |
+--------------------------------------------------------------------------------------------------------------------------
+lq (variabel) --> [data A][next]--->[data B][next]---->[data C][next]---> None
+
+Vad gär satsen p.data = 5? Du har en låda med 2 attribut dvs:
+[data, next] <---- Innehåller klassen Node genom, p = Node()
+Jag kan använda 2 olika operationer för p:
+1) p.data
+2) p.next
+
+* När en nod skapas med n = Node(rad) har n.next värdet None, dvs pekar inte på någonting (0 för objekt).
+En länkad lista består av noder som pekar vidare till nästa nod.
+Men datorn behöver något ställe att börja på för att kunna hitta första noden.
+Därför har man alltid en startpekare (oftast kallad head).
+Utan head finns det inget sätt att hitta listan i minnet – den blir i praktiken osynlig.
+
+----------------------------------------------------------------------------
+|    class Node:                                                           |
+|        def __init__(self, data, next = None):                            |
+|            self.data = data    # Kan referera till värde av valfri typ   |
+|            self.next = next                                              |
+|                                                                          |
+|    head = Node(10)                                                       |
+|    head.next = Node(20)                                                  |
+|    head.next.next = Node(30)                                             |
+|                                                                          |
+|    # loopa igenom                                                        |
+|    n = head  # KOPIERAR STARTPUNKTEN (PEKAREN)                           |
+|    while n:                                                              |
+|        print(n.data)                                                     |
+|        n = n.next                                                        |
+|                                                                          |
+|    n = head ──► [10 | next] ──► [20 | next] ──► [30 | None]              |
+-----------------------------------------------------------------------------
+***********************************************************************************
+
+****** Arrays ******
+-----------------------------------------------------
+| from array import array #Vi ska importera integers|
+| matrix = array("i",[1,2,3,4,5,6])                 |
+| matrix.append(7)                                  |
+| matrix.insert(2,3)                                |
+| matrix.remove(5)                                  |
+| matrix.pop(0)                                     |
+| print(matrix)                                     |
+-------------------- output -------------------------
+array('i', [2, 3, 3, 4, 6, 7])

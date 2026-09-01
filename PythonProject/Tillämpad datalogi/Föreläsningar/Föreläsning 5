@@ -1,0 +1,114 @@
+-------------------------------------------
+Föreläsning 5: Kryptering och datasäkerhet
+-------------------------------------------
+Att kryptera ett meddelande innebär att vi kodar det så att det blir oläsligt
+för alla utom den som vet hur man dekrypterar det.
+
+**** Transpositionschiffer ****
+genom att skriva meddelandet i en mxn-matris och bilda det kodade meddelandet genom att ta varje kolumn i texten.
+Den som känner till matrisens storlek kan lätt avkoda det:
+---------
+| JAGGÖ |  ← En matrix med dimensionerna 6 x 4
+| MMERP |
+| ENGAR |
+| NAIDE |
+| NGAML |
+| AEKEN |
+---------
+Detta kodas till: JMENNAAMNAGEGEGIAKGRADMEÖPRELN
+INTE LÄNGRE ANVÄNDBAR
+
+**** Caesarschiffer ****
+Julius Caesar lär ha använt denna metod:
+A byts mot D
+B byts mot E
+C byts mot F
+
+---------------------------------------------------------
+|    def rot13(meddelande):                             |
+|        alfabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"         |
+|        kod = ""                                       |
+|        for bokstav in meddelande:                     |
+|            index = (alfabet.find(bokstav) + 13) % 26  |
+|            kod = kod + alfabet[index]                 |
+|        return kod                                     |
+---------------------------------------------------------
+
+% dvs modulo som är retsen av en en division
+26 % 26 = 0 (eftersom 26 går 1 gång i 26 och ingen rest fås)
+28 % 26 = 2 (eftersom 26 går 1 gång i 26 och vi har kvar en rest på 2)
+
+* Ännu hemligare blir det om vi slumpar fram en mappning istället för att flytta fram ett visst antal steg:
+
+ABCDEFGHIJKLMNOPQRSTUVWXY
+|||||||||||||||||||||||||
+FSXNVDQBCULRHKTPAOMWJEIGY
+INTE LÄNGRE ANVÄNDBAR
+
+**** Bokschiffer ****
+Det är ett enkelt men mycket effektivt chiffer där man använder en bok som nyckel.
+Man letar rätt på ordet i boken och skriver ner sidnummer samt ordets nummer på sidan, t ex:
+---------------------------------
+| 534 13 127 220 10 109 220 129 |
+---------------------------------
+Den ena siffran anger sidan och den andra anger vilket ord på sidan det är.
+
+Vad är  1 1 1 0 0 0  xor 0 1 0 1 0 1?
+Om index[i] har samma siffra (detta fall 1 eller 0) på samma index i den andra lista → Blir det en nolla (0)
+Om index[i] har olika siffror (detta fall 1 eller 0) på samma index i den andra lista → Blir det en etta (1)
+
+**** One-time pad ****
+One-time pad är en oknäckbar krypteringsmetod som använder sig av en slumpad nyckel.
+Givet ett meddelande på binär form:
+* Slumpa fram en nyckel med lika många binära siffror som meddelandet har
+* Gör bitvis xor mellan meddelandet och nyckeln (operatorn ^ i Python)
+
+Alice och Bob måste ha varsitt exemplar av en "pad" (ett block) med slumpade siffror, som inte Eve har tillgång till.
+Alice använder första sidan i sitt block för att kryptera ett meddelande och river sedan av första arket och förstör det.
+--------------------------------
+|    meddelande   10010001010  |
+|    nyckel       01010011110  |
+|                 -----------  |
+|    krypterat    11000010100  |
+--------------------------------
+
+**** Säker nyckelöverföring (key exchange) ****
+Alice vill skicka ett exemplar av one-time pad till Bob utan att Eve (som jobbar som brevbärare) kan kopiera det. Hur ska hon göra?
+
+Alice lägger blocket i en inbrottssäker låda och sätter sitt A-lås på det. Endast hon själv har A-nyckeln.
+Hon skickar lådan till Bob (Eve kan inte låsa upp den).
+Bob kan inte öppna lådan ännu. Han sätter på sitt B-lås. Endast Bob har B-nyckeln.
+Han skickar tillbaka lådan till Alice.
+Alice låser upp A-låset och plockar bort det. Nu är lådan enbart låst med B-lås.
+Hon skickar lådan till Bob, som låser upp den och får sitt block.
+
+Detta är ett exempel på symmetrisk kryptering.
+Vid symmetrisk kryptering har sändare och mottagare samma krypteringsnyckel.
+
+**** Asymmetrisk kryptering ****
+Ett problem med många chiffer är att man måste berätta för mottagaren hur hon ska dechiffrera meddelandet,
+dvs vilken nyckel som ska användas:
+I asymmetrisk kryptering används nyckelpar. En publik och en privat nyckel hos vardera part:
+* Man krypterar med mottagarens publika nyckel. Mottagaren dekrypterar med sin privata nyckel.
+* Bob har en publik och privat nyckel. Han lägger upp den publika på sin webbsida där alla kan se den (även Eve).
+* Alice krypterar ett meddelande med Bobs publika nyckel och skickar meddelandet till Bob.
+* Eve kan inte läsa det krypterade meddelandet, men Bob kan dekryptera det med sin privata nyckel.
+
+- Hur ska Bob veta att det verkligen är Alice som har skickat meddelandet?
+* Hon kan signera meddelandet genom att kryptera en sträng med sin egen privata nyckel innan hon skickar det till Bob.
+* Bob kan sedan autentisera meddelandet genom att dekryptera denna sträng med Alice publika nyckel.
+
+**** RSA ****
+Först måste vi beräkna nycklarna:
+
+* Välj två stora primtal, p och q.
+* Beräkna n = p*q.
+* Beräkna f = (p-1)*(q-1).
+* Välj e så att det inte har några gemensamma faktorer med f (dvs gcd(e,f) ska bli 1).
+* Beräkna d som den multiplikativa inversen till e modulo f dvs så att: e*d modulo f = 1
+
+e och n är offentliga, medan d är privat. Själva krypteringen går till så att man först konverterar meddelandet till ett tal,
+ (t ex genom att varje bokstav eller tecken i pyhton är kopplat till ett nummer genom ord("()").
+Man delar upp det i lagom stora delar som vi kallar m1, m2 osv.
+Sedan beräknar vi m(i)^e % n för att få de kodade delarna c(i)
+För att knäcka RSA måste man faktorisera n, dvs lista ut vilka de två stora primtalen p och q är.

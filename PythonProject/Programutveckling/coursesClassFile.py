@@ -7,7 +7,6 @@ def get_classes():
     return [{"id": r[0], "course_code": r[1], "course_name": r[2], "hp": r[3]} for r in classes_rows]
 
 course_list = get_classes()
-print(get_classes())
 
 class Course:
     def __init__(self, course_id, course_code, course_name,hp):
@@ -33,6 +32,5 @@ def create_course_objects():
 
     return course_object_list
 
-cr = create_course_objects()
 
 

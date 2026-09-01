@@ -1,0 +1,49 @@
+---------------------
+Föreläsning 6: Grafer
+---------------------
+
+     A o ← Hörn
+ B o
+             o C
+         o D
+
+Linjerna mellan o:rna dessa kallas för kanter (alltså om man skulle dra en linje mellan 2 st o). Dessa kanter har oxå vikter (reseväg)
+Linjerna här skulle gå från A till B till C och sen till D
+Om ett hörn (o) har 2 st kanter som kommer FRÅN hörnet då kallar man att hörnet är av grad 2
+En stig är om man vill gå från hörn (A) till hörn (D), denna vägen kallas för en stig.
+En cykel är om man går från B till B dvs om man går runt i en cirkel
+En komplett graf har kanter mellan alla noder. Exemepelvis om en graf har 5 noder hur många kanter har denna graf?
+Antalet n(noder) ger: Antal kanter för en graf är - n(n-1)|/2 -
+
+Följande operationer (metoder om vi implementerar den med en klass) skulle en graf kunna ha:
+- addVertex(node)                #Lägger till hörnet node till grafen.
+- addEdge(node1, node2)    # Drar en kant mellan hörnen node1 och node2.
+- v = getVertex(key)              #Hittar och returnerar det hörn som har nyckeln key
+- vlist = getVertices()            #Returnerar en lista med alla hörn.
+
+* En graf kan implementeras med en grannmatris (adjacency matrix) *
+En grannmatris har ett element för varje möjlig kant mellan två hörn.
+Elementet kan vara True/False (för en oviktad graf) eller ha ett värde som anger kantens vikt (för en viktad graf).
+
+--------------
+|   A B C D  |
+| A   5   1  |
+| B 5        |
+| C       2  |
+| D 1   2    |
+--------------
+I denna grannmatris ser du koppling mellan A och B är en kant viktad 5. Mellan A och D är kanten viktad 1, C och D kant viktad 2
+
+En gles grannmatris ger ineffektiv lagring, så för grafer med relativt få kanter är det bättre att använda en grannlista, se nedan.
+Grannlistan har ett element för varje hörn, och i det lagras en lista (eller vektor) med kanterna:
+----------------
+|A|[B,5],[D,1] |
+|B|[A,5]       |
+|C|[D,2]       |
+|D|[A,1],[C,2] |
+----------------
+
+**** Problemträd ****
+En mycket stor klass av praktiska problem kan beskrivas med problemträd och lösas med trädgenomgång: bredden först eller djupet först.
+Ett problemträd är en riktad, acyklisk graf. Problemträd uppkommer ständigt i praktiken.
+Man brukar kalla startnoden för urmoder eller stamfar och noderna under den för barn

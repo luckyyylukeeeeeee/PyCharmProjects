@@ -1,0 +1,107 @@
+-------------------------
+Föreläsning 11: Hashning
+-------------------------
+
+Vi har sett att hashfunktioner kan användas både för att lagra lösenord säkert och vid textsökning (Rabin-Karp).
+
+Men hur ser en hashfunktion ut? Det finns många olika varianter.
+
+Oftast gäller det att först  räkna om en sträng till ett tal. Funktionen ord(tkn) i Python konverterar ett tecken till motsvarande ordningsnummer.
+t.ex är:
+- ord("A") = 65
+- ord("B") = 66
+- ord("C") = 67
+
+Då kan vi räkna om strängen "ABC" till ett tal genom att multiplicera den första bokstaven med 10000,
+den andra med 100, den tredje med 1 och slutligen addera talen, alltså: 65*104 + 66*102 + 67*100 = 656667
+
+På liknande sätt gör metoden hash(key) i Python men den använder 32 i stället för 100.
+För en binär dator är det nämligen mycket enklare att multiplicera med 32 än med 100. Här är en förenklad variant:
+---------------------------------------------------------------------------------
+|    def hash2(str):             # Beräknar hashkoden för en sträng key enligt  |
+|        result = 0              # key[0]*32n-1 + key[1]*32n-2 + ... + key[n-1] |
+|        for letters in str:                                                    |
+|            result = result*32 + ord(c)                                        |
+|        return result                                                          |
+---------------------------------------------------------------------------------
+
+*** Dictionary ****
+Med Pythons inbyggda dictionary har man möjlighet att skapa en uppslagslista. Man bygger upp den genom att lägga in nycklar och tillhörande värden:
+----------------------------------------------------
+  telefonnummer={}
+  telefonnummer["Linda Kann"] = "08-7909276"
+  telefonnummer["IT-support"] = "08-790 6600"
+----------------------------------------------------
+Sedan kan man slå upp i listan:
+-------------------------------------------------------
+   namn = input("Vem vill du ringa till? ")
+   try:
+       print("Telefonnumret är ", telefonnummer[namn])
+   except KeyError:
+       print(namn,"finns inte med i telefonlistan")
+---------------------------------------------------------
+Här är det varken linjärsökning eller binärsökning som används för att hitta nyckeln, utan en ännu snabbare sökmetod: hashning.
+
+*** Idén med hashning ***
+Binärsökning i en sorterad lista går visserligen snabbt, men sökning i en hashtabell är oöverträffat snabbt.
+Och ändå är tabellen helt oordnad (hash betyder ju hackmat, röra).
+Låt oss säga att vi söker efter "Pokémon 4ever" i en hashtabell av längd 1000.
+Då räknar vi först fram hashfunktionen för ordet "Pokémon 4ever" och det ger detta resultat.
+---------------------------------------------------------
+   hash("Pokémon 4ever") -> 8338994912692548419
+   8338994912692548419 % 1000 -> 419
+   # Hashvärdets rest vid division med 1000 beräknas nu
+---------------------------------------------------------
+och när vi kollar hashtabellens index 419 hittar vi "Pokémon 4ever" just där!
+
+*** Krockhantering ***
+Vi måste ändå kunna ta hand om de krockar som uppstår dvs om två stycken hashvärden har exakt samma index för hashtabellen. Hur?
+
+1.) Krocklistor
+En idé är att lägga alla namn som hashar till ett visst index som en krocklista. Här är det lätt att lägga till och ta bort saker.
+Om man har femtio procents luft i sin hashtabell blir krocklistorna i regel mycket korta.
+		Iron Man 3		    Engaged			        Star Trek	        Hitta Nemo
+                        Tokyo Godfathers				            Tjuven på Kgale Hill
+                            Fantasia
+
+2.) Kvadratisk probning
+I stället för att leta lediga platser som ligger tätt ihop kan man därför göra större hopp.
+Hopplängden bör då variera. Ett sätt är att "hoppa fram" i jämna kvadrater, så kallad kvadratisk probning.
+Om hashfunktionen gav värdet h1 tittar man i ordning på platserna: h1+1, h1+4, h1+9, ... .
+Överstiger värdena hashtabellens storlek använder man resten vid heltalsdivision precis som vid beräkningen av h1.
+Om tabellstorleken är ett primtal. och tabellen är som mest halvfull, så riskerar man inte att fastna i en evig hopprunda
+
+3.) Dubbelhashning
+Ytterligare ett sätt att lösa krockproblemet är dubbelhashning.
+I denna variant räknas nästa värde fram med en annan hashfunktion som tar som indata den första hashfunktionens värde. För att hitta efterföljande platser låter man den andra hashfunktionen få sitt förra värde som indata.
+
+h1 = hash(x)
+h2 = hash2(h1)
+h3 = hash2(h2)
+
+Både kvadratisk probning och dubbelhashning ger goda prestanda om hashtabellen har femtio procent luft.
+En nackdel med båda metoderna är att man inte enkelt kan ta bort noder utan att förstöra hela systemet.
+
+*** Användningsaspekter ***
+I nästan alla sammanhang där snabb sökning krävs är det hashtabeller som används.
+Krockar hanteras bäst med länkade listor, men i vissa programspråk är det svårt att spara länkade strukturer på fil, så därför är dubbelhashning fortfarande mycket använt i stora databaser.
+Om man vill kunna söka dels på namn, dels på personnummer kan man ha en hashtabell för varje sökbegrepp, men det går också att ha en enda tabell.
+En viss person hashas då in med flera nycklar, men själva informationsnoden finns alltid bara i ett exemplar.
+Flera olika noder i hashtabellen kan ju peka ut samma informationsnod.
+Hur ska hashtabellen hantera det fall när man försäker stoppa in ett nytt värde för en nyckel som redan finns?
+För binärträdet i labb 3 smög vi runt problemet genom att vägra ta emot dubbletter.
+Men en rimligare lösning här vore att byta ut det lagrade värdet mot det nya.
+
+*** Bloomfilter ***
+En algoritm för stavningskontroll kan se ut på följande sätt:
+Läs in ordlistan i lämplig datastruktur där för varje ord 'w' i texten --> slå upp 'w' i ordlistan och säg till om den inte finns!
+Kraven på datastrukturen var:
+- Uppslagning ska gå snabbt,
+- Nya ord ska kunna läggas till snabbt
+- Minnesutrymmen ska inte vara större än ordlistan
+- Orden ska inte gå att utvinna
+
+Exempel på algoritmen för bloomfilter:
+- Låt f vara en funktion som omvandlar ett ord till ett arrayindex i en boolesk array v (alltså hadtabellen)
+- Ett ord är med i ordlistanom v[f(ordet)] = sant
+

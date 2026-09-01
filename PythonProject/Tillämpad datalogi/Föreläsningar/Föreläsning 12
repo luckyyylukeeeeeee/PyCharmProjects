@@ -1,0 +1,32 @@
+-----------------------
+Föreläsning 12:  Syntax
+-----------------------
+Ett formellt språk är en väldefinierad uppsättning textsträngar som kan vara oändligt stor, till exempel alla Python-program, eller ändligt stor, till exempel alla månadsnamn.
+Det bästa sättet att definiera ett språk är med en syntax (observera betoning på sista stavelsen!), det vill säga en grammatik.
+
+Exempel: Språket som består av satserna JAG VET, JAG TROR, DU VET och DU TROR definieras av syntaxen
+<Sats> ::= <Subj> <Pred> <-- Icke slutsymbol
+<Subj> ::= "JAG" | "DU" <-- Slutsymbol
+<Pred> ::= "VET" | "TROR"
+Kallas för BNF = Backus Naur Form
+I syntaxen ovan har vi tre omskrivningsregler.
+Varje regel består av ett vänsterled med en icke-slutsymbol (t ex <Sats> ovan) och ett högerled som talar om vad man kan ersätta vänsterledet med.
+I högerledet får det förekomma både icke-slutsymboler och slutsymboler (t ex JAG i exemplet ovan).
+Tecknet | betyder 'eller' i syntaxen.
+
+Meningar av typen
+JAG VET ATT DU TROR ATT JAG VET OCH JAG TROR ATT DU VET ATT JAG TROR definieras nu så här:
+
+<Mening> ::= <Sats> | <Sats><Konj><Mening>
+<Sats> ::= <Subj> <Pred>
+<Subj> ::= JAG | DU
+<Pred> ::= VET | TROR
+<Konj> ::= ATT | OCH
+
+1.) JAG VET (<Sats>)
+2.) ATT (<Konj>)
+3.) DU TROR ATT JAG VET (<Mening>) (REKURSION --> Den tar att <Mening> blir en <Sats> genom att kalla på sig själv återgår till <Sats>
+4.) OCH (<Konj>)
+5.) JAG TROR ATT DU VET ATT JAG TROR (<Mening>). Rekursion gör meningen annars hade det blivit följande:
+    <Sats> <Konj> <Sats> <Konj> <Sats>
+         <Mening>  +  <Mening>  -->  <Mening>

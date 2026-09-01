@@ -1,0 +1,142 @@
+---------------------------
+Föreläsning 9: Komprimering
+---------------------------
+Till vardags använder vi decimala talsystemet med tio siffror: 0-9
+Andra talsystem finns, t ex;
+* Binära tal (två siffror: 0-1)
+* Oktala tal (åtta siffror: 0-7): d(n) * 8^n.... + d(0) * 8^0
+* Hexadecimala tal (sexton siffror:0-F): 1D = (1 * 16^1 + 13*16^0) och AA = (10 * 16^1 + 10 * 16^0)
+0	0	0	0
+1	1	1	1
+2	10	2	2
+3	11	3	3
+4	100	4	4
+5	101	5	5
+6	110	6	6
+7	111	7	7
+8	1000	10	8
+9	1001	11	9
+10	1010	12	A
+11	1011	13	B
+12	1100	14	C
+13	1101	15	D
+14	1110	16	E
+15	1111	17	F
+16	10000	20	10
+17	10001	21	11
+18	10010	22	12
+19	10011	23	13
+20	10100	24	14
+21	10101	25	15
+22	10110	26	16
+23	10111	27	17
+24	11000	30	18
+25	11001	31	19
+26	11010	32	1A
+27	11011	33	1B
+28	11100	34	1C
+29	11101	35	1D
+
+
+*** Komprimering ****
+Komprimering innebär att man använder någon metod för att minska storleken på en fil. Vi skiljer mellan
+
+förlustfri komprimering (non-lossy compression) där det går att dekomprimera för att få tillbaka filen i ursprungligt skick och
+förstörande komprimering (lossy compression) där man tar bort data.
+Att det går att komprimera utan att förstöra en fil beror på att filer oftast har redundans, dvs innehåller mer än nödvändigt.
+
+Komprimeringsgraden är ett mått på hur effektiv komprimeringen var:
+
+Komprimeringgrad = storlek före kompremering / storleks efter komprimering
+
+Ett högre värde på komprimeringsgraden innebär alltså bättre komprimering!
+
+
+*** Följdlängdskodning - RLE *** (INTE särskilt användbar men endast i bildkomprimering)
+I följdlängdskodning, förkortat RLE (Run-Length-Encoding), utnyttjar man att en följd av likadana tecken kan lagras med antal istället för att skrivas ut.
+
+ÅÅÅÅH! JAAAAAAA! AAAAAAAAAAAAH.
+
+Vi ersätter följderna av Å och A med antalet följt av det upprepade tecknet:
+4ÅH! J7A! 12AH.
+Algoritmen blir enkel, men tyvärr inte så användbar för textkomprimering eftersom de flesta texter inte innehåller längre följder av samma tecken.
+
+*** Huffmankodning ***
+Om vi vet hur vanliga olika tecken är i texten kan vi ställa upp en tabell där vi för varje tecken kan ange sannolikheten för att ett visst tecken ska dyka upp.
+I David A. Huffmans metod kodar man varje tecken med ett binärt tal, där vanligare tecken får kortare koder.
+Algoritmen som beräknar vilket tecken som ska få vilken binär kod går ut på att man ritar upp ett binärt träd, där varje tecken ses som ett löv.
+Sedan numrerar man trädets grenar med 0 och 1 och följer trädet från roten ut till varje löv för att se koderna.
+
+Sortera tecknen som ska kodas i stigande sannolikhetsordning.
+Rita grenar från de två tecken som har lägst sannolikhet och låtsas att vi har ett nytt tecken med sannolikhet som är summan av deras sannolikheter.
+Numrera ena grenen med 0 och andra med 1.
+Sortera in det nya låtsastecknet bland övriga tecken.
+Upprepa punkt 2 tills alla tecken (även de nytillkomna) kommit med. Roten bör få sannolikhet 1.
+Börja från roten och följ grenarna ut till ett löv. Samla nollor och ettor på vägen - dessa ger koden för lövets tecken.
+
+*** Lempel-Ziv ***
+Jacob Ziv och Abraham Lempel uppfann en förutsättningslös metod som anpassar sig till indata.
+Principen är att man går igenom filen och bygger en ordlista som används för kodningen.
+Lempel-Ziv finns i ett otal olika varianter: LZ77, LZSS, LZFG, LZW, LZMW, LZAP, LZY, LZP, osv. Så här fungerar iaf LZW:
+- Läs in tecken för tecken och slå ihop till en sträng s.
+- Fortsätt på det viset så länge som strängen redan finns med i ordlistan.
+- Så småningom får vi en sträng som inte finns i ordlistan (s finns med men inte s+c).
+- Skriv då ut koden för strängen s, skriv ut tecknet c, och lägg in s+c i ordlistan.
+
+Klassen Table (som används för ordlistan) är tänkt att vara en datastruktur där man kan stoppa in strängar med add(), kolla om en sträng finns med exists(), och få ut en kod för en given sträng med code().
+LZ-komprimering används i många komprimeringsprogram, t ex compress, zip, WinZip och GZip (här i kombination med Huffmankodning).
+
+Exempel: Använd LZW-algoritmen ovan för att komprimera NÄSSNUVSNORSNOK
+
+Om vi använder en vektor som tabell och för enkelhets skull kodar strängarna med vektorindex får vi tabellen:
+
+code	0	  1	 2	  3	   4	 5	  6	     7	  8        9
+sträng	"N"	"Ä"	"S"	"SN" "U"	"V"	"SNO"	"R"	"SNOK"  "SNOKA"
+och det komprimerade ordet blir: NÄS2NUV3OR6K8A
+
+*** Entropi ***
+Hur mycket kan man komprimera utan att förlora information?
+Om det var möjligt att komprimera hur mycket som helst skulle vi kunna få ner varje fil till en bit, men det kan vi uppenbarligen inte.
+Det finns alltså en undre gräns för hur kompakt man kan få en fil med förlustfri komprimering.
+Om man känner till sannolikheten för varje tecken som ska kodas (som i skräckexemplet ovan) kan man beräkna entropin som ger en undre gräns för medellängden hos en kod.
+
+Anta att vi har en teckenmängd m1, m2,...,mn (t ex alfabetet) och att sannolikheten för att tecknet mi ska förekomma är P(mi).
+Då är L(mi)=-log(P(mi)) minimilängden för ett kodord för tecknet mi och
+Lmedel = P(m1)*L(m1) + ... + P(mn)*L(mn)
+
+medellängden för koderna (entropin).
+
+
+*** Komprimering av bilder ***
+Det är vanligt att varje bildpunkt (pixel) i en färgbild representeras med ett 24-bitars binärt tal (vilket ger oss åtta bitar för vardera rött,
+grönt resp blått), vilket ger 224 (nästan 17 miljoner) färger.
+
+Då tar en färgbild på 100x100 pixlar 240000 bitar dvs ((100 x 100)*24=240000), dvs 240000/8 = 30000 Byte = 30 kB
+och en bild som täcker en 1080x1920-skärm ((1080*1920)*24)=49 766 400 och tar då ca 6 MB (49 766 400/8 = 6 220 8000).
+
+*** Felkorrektion ***
+Vill man gardera sig mot fel kan man lägga till redundans (motsatsen till komprimering).
+Det finns många olika sätt att göra det på, här följer några exempel:
+
+Kontrollsiffra (t ex sista siffran i ett personnummer).
+Skicka kopior av hela meddelandet, minst tre behövs om man ska kunna korrigera.
+Paritetsbitar, att man lägger till en etta eller nolla till ett binärt tal för att få ett udda antal ettor i talet. Ett jämnt antal ettor innebär att nån bit är fel.
+Hammingavstånd: Lägg till så många extrabitar till koden så att varje enbitsfel ger ett kodord som skiljer sig i en bit från det korrumperade kodordet,
+men i flera bitar från alla övriga kodord. Två kodord har Hammingavstånd d om dom skiljer sig åt i d bitar.
+En kod har Hammingavstånd d om alla kodord är minst d ifrån varann. Givet koderna nedan - hur ska vi tolka meddelandet 10010 01110 10101 ?
+A	01011
+F	10010
+I	01100
+N	10101
+
+
+Koden 01110 finns inte i tabellen. Vilket tecken ligger närmast?
+
+01110	Hammingavstånd (Antal bitar som är olika)
+A	01011	  2
+F	10010	  3
+I	01100	  1
+N	10101	  3
+
+
+
