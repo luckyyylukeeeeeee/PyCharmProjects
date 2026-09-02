@@ -17,6 +17,13 @@ class Student:
     def print_info(self):
         print(self.student_id, self.name)
 
+    def get_student_id(self):
+        return self.student_id
+
+    def get_name(self):
+        return self.name
+
+
 def create_student_objects():
     student_object_list = []
     for each_student in student_list:

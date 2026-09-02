@@ -12,16 +12,22 @@ def get_course_reg():
 course_reg = get_course_reg()
 
 class CourseRegistration:
-    def __init__(self, student_id, course_id):
-        self.student_id = student_id
-        self.course_id = course_id
+    def __init__(self, reg_student_id, reg_course_id):
+        self.reg_student_id = reg_student_id
+        self.reg_course_id = reg_course_id
+
+    def get_reg_student_id(self):
+        return self.reg_student_id
+
+    def get_reg_course_id(self):
+        return self.reg_course_id
 
 def create_registration_objects():
     registration_objects = []
     for registration in course_reg:
         registration_object = CourseRegistration(
-            student_id=registration["student_id"],
-            course_id=registration["kurs_id"])
+            reg_student_id=registration["student_id"],
+            reg_course_id=registration["kurs_id"])
         registration_objects.append(registration_object)
     return registration_objects
 

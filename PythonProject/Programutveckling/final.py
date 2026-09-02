@@ -8,34 +8,33 @@ registration_objects = create_registration_objects()
 
 total_amount_of_course_points = 0
 for each_course in course_objects:
-    total_amount_of_course_points += each_course.hp
+    total_amount_of_course_points += each_course.get_hp()
 
-all_students = {}
+all_students_points = {}
+
 for students in student_objects:
-    all_students[students.name] = []
+    all_students_points[students.get_name()] = 0
+
+
 
 for each_reg_course in registration_objects:
     for students in student_objects:
-        if students.student_id == each_reg_course.student_id:
+        if students.get_student_id() == each_reg_course.get_reg_student_id():
             for courses in course_objects:
-                if courses.course_id == each_reg_course.course_id:
-                    all_students[students.name].append(courses)
+                if courses.get_course_id() == each_reg_course.get_reg_course_id():
+                    all_students_points[students.get_name()] += courses.get_hp()
 
-for students in all_students:
-    print(students, all_students[students])
 
-student_points = {}
-for students in student_objects:
-    tot_course_points = 0
-    for each_course in all_students[students.name]:
-        tot_course_points += each_course.hp
-    student_points[students.name] = tot_course_points
+for c in all_students_points:
+    print(c, all_students_points[c])
 
 total_courses_cleared = {}
-for each_student in student_points:
-    points = (student_points[each_student] / total_amount_of_course_points) * 100
+for each_student in all_students_points:
+    points = (all_students_points[each_student] / total_amount_of_course_points) * 100
     total_courses_cleared[each_student] = f"{points:.1f}%"
 
+print(f"Antal obligatoriska poäng: {total_amount_of_course_points}")
+print("-"*32)
 for student in total_courses_cleared:
     print(student, total_courses_cleared[student])
 

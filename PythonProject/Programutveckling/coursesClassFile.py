@@ -18,9 +18,20 @@ class Course:
     def print_info(self):
         print(self.course_id, self.course_code,self.course_name,self.hp)
 
+    def get_course_id(self):
+        return self.course_id
+
+    def get_course_code(self):
+        return self.course_code
+
+    def get_course_name(self):
+        return self.course_name
+
+    def get_hp(self):
+        return self.hp
+
 def create_course_objects():
     course_object_list = []
-
     for each_course in course_list:
         course_object = Course(
             course_id=each_course["id"],
@@ -29,7 +40,6 @@ def create_course_objects():
             hp=each_course["hp"]
         )
         course_object_list.append(course_object)
-
     return course_object_list
 
 
