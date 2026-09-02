@@ -1,8 +1,6 @@
-from studentClassFile import Student, create_student_objects
-from coursesClassFile import Course, create_course_objects
-
-
 import sqlite3
+import unittest
+
 def get_course_reg():
     con = sqlite3.connect("medieteknik.sqlite")
     cur = con.cursor()
@@ -32,7 +30,14 @@ def create_registration_objects():
     return registration_objects
 
 
+class TestCourseReg(unittest.TestCase):
+    def test_student(self):
+        student = CourseRegistration(1,8)
+        self.assertEqual(student.get_reg_student_id(), 1)
+        self.assertEqual(student.get_reg_course_id(), 8)
 
+if __name__ == '__main__':
+    unittest.main()
 
 
 

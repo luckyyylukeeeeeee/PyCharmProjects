@@ -1,4 +1,5 @@
 import sqlite3
+import unittest
 
 def get_classes():
     con_2 = sqlite3.connect("medieteknik.sqlite")
@@ -14,9 +15,6 @@ class Course:
         self.course_code = course_code
         self.course_name=course_name
         self.hp=hp
-
-    def print_info(self):
-        print(self.course_id, self.course_code,self.course_name,self.hp)
 
     def get_course_id(self):
         return self.course_id
@@ -44,3 +42,13 @@ def create_course_objects():
 
 
 
+class TestStudent(unittest.TestCase):
+    def test_student(self):
+        student = Course(1, "DM1581", "Introduktion till medieteknik", 6.0)
+        self.assertEqual(student.get_course_id(), 1)
+        self.assertEqual(student.get_course_code(), "DM1581")
+        self.assertEqual(student.get_course_name(), "Introduktion till medieteknik")
+        self.assertEqual(student.get_hp(), 6.0)
+
+if __name__ == '__main__':
+    unittest.main()
