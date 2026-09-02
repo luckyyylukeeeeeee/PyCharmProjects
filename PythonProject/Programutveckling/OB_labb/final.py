@@ -1,6 +1,6 @@
-from studentClassFile import Student, create_student_objects
-from coursesClassFile import Course, create_course_objects
-from courseRegFile import CourseRegistration, create_registration_objects
+from studentClassFile import create_student_objects
+from coursesClassFile import create_course_objects
+from courseRegFile import create_registration_objects
 
 student_objects = create_student_objects()
 course_objects = create_course_objects()
