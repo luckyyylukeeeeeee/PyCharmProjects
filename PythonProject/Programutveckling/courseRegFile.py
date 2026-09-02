@@ -10,7 +10,7 @@ def get_course_reg():
     return [{"student_id": r[0], "kurs_id": r[1]} for r in classes_rows]
 
 course_reg = get_course_reg()
-#print(course_reg)
+
 class CourseRegistration:
     def __init__(self, student_id, course_id):
         self.student_id = student_id
