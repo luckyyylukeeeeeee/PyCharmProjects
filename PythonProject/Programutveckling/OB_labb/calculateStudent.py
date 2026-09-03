@@ -1,6 +1,6 @@
 from studentClassFile import create_student_objects
 from coursesClassFile import create_course_objects
-from courseRegFile import create_registration_objects
+from courseRegClassFile import create_registration_objects
 
 student_objects = create_student_objects() #Kallar på funktionen som skapar objekten från studentClassFile
 course_objects = create_course_objects() #Kallar på funktionen som skapar objekten från coursesClassFile
