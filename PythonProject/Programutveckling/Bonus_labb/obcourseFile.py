@@ -11,6 +11,8 @@ class OC:
         self.course_id = course_id
         self.program_id = program_id
 
+    def get_ob
+
 def create_ob_course_objects():
     course_ob_list = []
     for each_course in get_ob_course():

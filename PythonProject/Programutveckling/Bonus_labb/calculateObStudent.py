@@ -10,3 +10,7 @@ registration_objects = create_registration_objects() #Kallar på funktionen som 
 program_objects = create_program_objects() #Kallar på funktionen som skapar objekten från programFile
 ob_course_projects = create_ob_course_objects() #Kallar på funktionen som skapar objekten från obcourseFile
 
+def find_and_calculate_ob_course_points():
+    ob_courses_for_programmes = {}
+    for all_courses in program_objects:
+        ob_courses_for_programmes[all_courses.get_name()] = []
