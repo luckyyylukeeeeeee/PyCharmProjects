@@ -32,8 +32,8 @@ class CourseRegistration:
         return self.reg_course_id
 
 def create_registration_objects():
-    """Skapar CourseRegistration-objekt utifrån informationen från databasen.
-    :return: En lista med CourseRegistration-objekt.
+    """Skapar CourseRegistration objekt utifrån informationen från databasen.
+    :return: En lista med CourseRegistration objekt.
     """
     registration_objects = []
     for registration in course_reg:

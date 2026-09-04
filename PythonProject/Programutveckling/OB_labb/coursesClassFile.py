@@ -40,8 +40,8 @@ class Course:
         return self.hp
 
 def create_course_objects():
-    """Skapar Course-objekt utifrån informationen från databasen.
-    :return: En lista med Course-objekt.
+    """Skapar Course objekt utifrån informationen från databasen.
+    :return: En lista med Course objekt.
     """
     course_object_list = []
     for each_course in course_list:
@@ -55,7 +55,7 @@ def create_course_objects():
     return course_object_list
 
 class TestStudent(unittest.TestCase):
-    """Testar att Course-klassen skapar objekt med rätt course_id, course_code, course_name och hp."""
+    """Testar att Course klassen skapar objekt med rätt course_id, course_code, course_name och hp."""
     def test_student(self):
         """Kontrollera att getters returnerar rättinformation."""
         student = Course(1, "DM1581", "Introduktion till medieteknik", 6.0)

@@ -29,8 +29,8 @@ class Student:
         return self.name
 
 def create_student_objects():
-    """Skapar Student-objekt utifrån informationen från databasen.
-    :return: En lista med Student-objekt.
+    """Skapar Student objekt utifrån informationen från databasen.
+    :return: En lista med Student objekt.
     """
     student_object_list = []
     for each_student in get_students():
@@ -42,7 +42,7 @@ def create_student_objects():
 
 
 class TestStudent(unittest.TestCase):
-    """Testar att Student-klassen skapar objekt med rätt student-ID och namn."""
+    """Testar att Student klassen skapar objekt med rätt student-ID och namn."""
     def test_student(self):
         """Kontrollera att getters returnerar rättinformation."""
         student = Student(7, "Dave")
