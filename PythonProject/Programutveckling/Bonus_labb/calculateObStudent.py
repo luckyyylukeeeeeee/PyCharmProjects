@@ -41,7 +41,7 @@ def find_programme_students():
     :return Ett nested dictionary där programnamnet är första nyckeln och sen student namnet är andra nyckeln
     med datan antal ob hp avklarade av just den specifika studenten. Typ såhär ser det ut:
         {
-        ├──── 'Media': {
+        ├────  'Media': {
         │       ├── 'Eleven' : - Antal ob hp avklarade
         │       ├── 'Steve' :    -||-
         │       }
