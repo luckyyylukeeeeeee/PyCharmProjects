@@ -1,4 +1,5 @@
 import sqlite3
+import unittest
 
 def get_courses():
     con_2 = sqlite3.connect("eecs.sqlite")
@@ -16,9 +17,14 @@ class Course:
     def get_course_id(self):
         return self.course_id
 
+    def get_course_name(self):
+        return self.course_name
+
+    def get_course_code(self):
+        return self.course_code
+
     def get_hp(self):
         return self.hp
-
 
 def create_course_objects():
     course_object_list = []
@@ -31,3 +37,16 @@ def create_course_objects():
         )
         course_object_list.append(course_object)
     return course_object_list
+
+class TestCourse(unittest.TestCase):
+    """Testar att Student-klassen skapar objekt med rätt student-ID, namn och program-ID."""
+    def test_student(self):
+        """Kontrollerar att getters returnerar rätt student-ID, namn och program-ID."""
+        student = Course(1, "SF1624", "Envariabelanalys",7.5)
+        self.assertEqual(student.get_course_id(), 1)
+        self.assertEqual(student.get_course_code(), "SF1624")
+        self.assertEqual(student.get_course_name(), "Envariabelanalys")
+        self.assertEqual(student.get_hp(), 7.5)
+
+if __name__ == '__main__':
+    unittest.main()

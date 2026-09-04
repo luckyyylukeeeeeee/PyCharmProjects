@@ -1,4 +1,5 @@
 import sqlite3
+import unittest
 
 def get_course_registration():
     con_2 = sqlite3.connect("eecs.sqlite")
@@ -25,3 +26,14 @@ def create_registration_objects():
             course_id=registration["kurs_id"])
         registration_objects.append(registration_object)
     return registration_objects
+
+class TestCourseReg(unittest.TestCase):
+    """Testar att Student-klassen skapar objekt med rätt student-ID, namn och program-ID."""
+    def test_student(self):
+        """Kontrollerar att getters returnerar rätt student-ID, namn och program-ID."""
+        student = CourseRegistration(1, 1)
+        self.assertEqual(student.get_student_id(), 1)
+        self.assertEqual(student.get_course_id(), 1)
+
+if __name__ == '__main__':
+    unittest.main()

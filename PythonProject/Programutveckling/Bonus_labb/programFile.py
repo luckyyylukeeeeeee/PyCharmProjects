@@ -1,5 +1,5 @@
 import sqlite3
-
+import unittest
 
 def get_program():
     con_2 = sqlite3.connect("eecs.sqlite")
@@ -11,9 +11,6 @@ class Program:
     def __init__(self, program_id, program_name):
         self.program_id = program_id
         self.program_name = program_name
-
-    def get_info(self):
-        return print(self.program_id,self.program_name)
 
     def get_name(self):
         return self.program_name
@@ -29,4 +26,15 @@ def create_program_objects():
             program_name=each_program["program_name"])
         program_object_list.append(program_object)
     return program_object_list
+
+class TestProgramme(unittest.TestCase):
+    """Testar att Student-klassen skapar objekt med rätt student-ID, namn och program-ID."""
+    def test_student(self):
+        """Kontrollerar att getters returnerar rätt student-ID, namn och program-ID."""
+        student = Program(2, "Datateknik")
+        self.assertEqual(student.get_program_id(), 2)
+        self.assertEqual(student.get_name(), "Datateknik")
+
+if __name__ == '__main__':
+    unittest.main()
 

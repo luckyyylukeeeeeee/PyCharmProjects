@@ -27,7 +27,7 @@ def find_and_calculate_ob_course_points():
         programme_points[programme] = total_hp
     return ob_courses_for_programmes, programme_points
 
-print(find_and_calculate_ob_course_points())
+#print(find_and_calculate_ob_course_points())
 
 def find_programme_students():
     ob_courses_for_each_programme, _ = find_and_calculate_ob_course_points()
@@ -41,18 +41,24 @@ def find_programme_students():
                     if each_reg_course.get_student_id() == each_student.get_student_id():
                         for each_course in course_objects:
                             if each_reg_course.get_course_id() == each_course.get_course_id():
-
                                 for each_ob_c_id in ob_courses_for_each_programme[programme.get_name()]:
                                     if each_course.get_course_id() == each_ob_c_id:
                                         students_per_programme[programme.get_name()][each_student.get_name()] += each_course.get_hp()
-
     return students_per_programme
 
-print(find_programme_students())
+#print(find_programme_students())
 
+def main():
+    get_programmes = find_programme_students()
+    _, programme_points = find_and_calculate_ob_course_points()
+    for programme, students in get_programmes.items():
+        print(f"{programme}:")
+        for each_person, hp in students.items():
+            points = (hp / programme_points[programme]) * 100
+            students[each_person] = f"{points:.1f}%"
+            print (f"  {each_person} {students[each_person]}")
+    return get_programmes
 
+if __name__ == "__main__":
+    main() # Påbörjar programmet
 
-
-    
-
-#def get_each_programme_ob_hp():
