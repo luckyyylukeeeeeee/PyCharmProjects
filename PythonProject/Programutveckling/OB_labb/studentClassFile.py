@@ -1,54 +1,75 @@
-import sqlite3
 import unittest
 
-def get_students():
-    """Hämtar studentinformation från SQLite-databasen och sparar
-    informationen i en lista med dictionaries.
-    :return: En lista med studenternas student_id och name.
-    """
-    con_1 = sqlite3.connect("medieteknik.sqlite")
-    cur_1 = con_1.cursor()
-
-    students_rows = cur_1.execute("SELECT * FROM Student")
-    return [{"student_id": r[0], "name": r[1]} for r in students_rows]
 
 class Student:
-    """Representerar en student som hämtats från databasen.
-    Klassen innehåller studentens ID och namn som attribut.
-    """
+    """Representerar en student."""
+
     def __init__(self, student_id, name):
         self.student_id = student_id
         self.name = name
 
     def get_student_id(self):
-        """Metod som returnerar student_id."""
+        """Returnerar studentens ID."""
         return self.student_id
 
     def get_name(self):
-        """Metod som returnerar name."""
+        """Returnerar studentens namn."""
         return self.name
 
-def create_student_objects():
-    """Skapar Student objekt utifrån informationen från databasen.
-    :return: En lista med Student objekt.
+
+class MediaStudent(Student):
+    """Representerar en student på Medieteknik.
+
+    MediaStudent är en subklass till Student och
+    innehåller även en lista över studentens klarade kurser.
     """
-    student_object_list = []
-    for each_student in get_students():
-        student_object = Student(
-            student_id=each_student["student_id"],
-            name=each_student["name"])
-        student_object_list.append(student_object)
-    return student_object_list
+
+    def __init__(self, student_id, name):
+        super().__init__(student_id, name)
+        self.courses = []
+
+    def add_course(self, course):
+        """Lägger till en kurs som studenten har klarat."""
+        self.courses.append(course)
+
+    def get_courses(self):
+        """Returnerar listan över studentens klarade kurser."""
+        return self.courses
 
 
 class TestStudent(unittest.TestCase):
-    """Testar att Student klassen skapar objekt med rätt student-ID och namn."""
+    """Testar Student-klassen."""
+
     def test_student(self):
-        """Kontrollera att getters returnerar rättinformation."""
+        """Kontrollerar att Student skapas med rätt information."""
+
         student = Student(7, "Dave")
+
         self.assertEqual(student.get_student_id(), 7)
         self.assertEqual(student.get_name(), "Dave")
 
+
+class TestMediaStudent(unittest.TestCase):
+    """Testar MediaStudent-klassen."""
+
+    def test_media_student(self):
+        """Kontrollerar att MediaStudent skapas korrekt."""
+
+        student = MediaStudent(7, "Dave")
+
+        self.assertEqual(student.get_student_id(), 7)
+        self.assertEqual(student.get_name(), "Dave")
+        self.assertEqual(student.get_courses(), [])
+
+    def test_add_course(self):
+        """Kontrollerar att en kurs kan läggas till."""
+
+        student = MediaStudent(7, "Dave")
+
+        student.add_course(8)
+
+        self.assertEqual(student.get_courses(), [8])
+
+
 if __name__ == '__main__':
     unittest.main()
-

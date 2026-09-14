@@ -1,58 +1,138 @@
-from studentClassFile import create_student_objects
-from coursesClassFile import create_course_objects
-from courseRegClassFile import create_registration_objects
+from studentClassFile import MediaStudent
+from coursesClassFile import Course
+from database import get_students, get_courses, get_registrations
 
-student_objects = create_student_objects() #Kallar på funktionen som skapar objekten från studentClassFile
-course_objects = create_course_objects() #Kallar på funktionen som skapar objekten från coursesClassFile
-registration_objects = create_registration_objects() #Kallar på funktionen som skapar objekten från courseRegFile
 
-def calculate_hp_per_student():
-    """Beräknar hur många högskolepoäng varje student har klarat
-    baserat på studentens kursregistreringar.
-    :return: En dictionary med studenternas namn och totala antal högskolepoäng.
-    """
+def create_student_objects():
+    """Skapar MediaStudent-objekt från databasen."""
+
+    student_object_list = []
+
+    for student in get_students():
+
+        student_object = MediaStudent(
+            student_id=student["student_id"],
+            name=student["name"]
+        )
+
+        student_object_list.append(student_object)
+
+    return student_object_list
+
+
+def create_course_objects():
+    """Skapar Course-objekt från databasen."""
+
+    course_object_list = []
+
+    for course in get_courses():
+
+        course_object = Course(
+            course_id=course["course_id"],
+            course_code=course["course_code"],
+            course_name=course["course_name"],
+            hp=course["hp"]
+        )
+
+        course_object_list.append(course_object)
+
+    return course_object_list
+
+
+def add_courses_to_students(student_objects, course_objects):
+    """Lägger till studenternas klarade kurser."""
+
+    registrations = get_registrations()
+
+    for registration in registrations:
+
+        student_id = registration["student_id"]
+        course_id = registration["course_id"]
+
+        for student in student_objects:
+
+            if student.get_student_id() == student_id:
+
+                for course in course_objects:
+
+                    if course.get_course_id() == course_id:
+
+                        student.add_course(course)
+
+
+def calculate_hp_per_student(student_objects):
+    """Beräknar hur många högskolepoäng varje student har klarat."""
+
     all_students_points = {}
-    for students in student_objects:
-        all_students_points[students.get_name()] = 0 # Lägger till alla studenter i en dictionary och börjar på 0 poäng.
-    for each_reg_course in registration_objects: # Går igenom alla kursregistreringar
-        for students in student_objects:
-            if students.get_student_id() == each_reg_course.get_reg_student_id(): # Kontrollerar vilken student kursregistreringen tillhör.
-                for courses in course_objects:
-                    if courses.get_course_id() == each_reg_course.get_reg_course_id(): # Kontrollerar vilken kurs som kursregistreringen gäller.
-                        all_students_points[students.get_name()] += courses.get_hp() # Lägger till kursens högskolepoäng till studenten.
+
+    for student in student_objects:
+
+        total_hp = 0
+
+        for course in student.get_courses():
+            total_hp += course.get_hp()
+
+        all_students_points[student.get_name()] = total_hp
+
     return all_students_points
 
-def calculate_total_course_points():
-    """Beräknar det totala antalet högskolepoäng för alla obligatoriska kurser.
-    :return: Det totala antalet högskolepoäng.
-    """
+
+def calculate_total_course_points(course_objects):
+    """Beräknar det totala antalet högskolepoäng."""
+
     total_amount_of_course_points = 0
-    # Går igenom alla kurser och summerar deras högskolepoäng.
-    for each_course in course_objects:
-        total_amount_of_course_points += each_course.get_hp()
+
+    for course in course_objects:
+        total_amount_of_course_points += course.get_hp()
+
     return total_amount_of_course_points
 
+
 def main():
-    """Kör programmets huvudfunktion och beräknar hur stor andel
-    av de obligatoriska högskolepoängen varje student har klarat.
-    """
-    tot_course_points = calculate_total_course_points()
-    st_points = calculate_hp_per_student()
+    """Kör programmet."""
+
+    # Skapar student- och kursobjekt från databasen.
+    student_objects = create_student_objects()
+    course_objects = create_course_objects()
+
+    # Lägger studenternas kurser i deras MediaStudent-objekt.
+    add_courses_to_students(
+        student_objects,
+        course_objects
+    )
+
+    # Beräknar totalt antal obligatoriska poäng.
+    tot_course_points = calculate_total_course_points(
+        course_objects
+    )
+
+    # Beräknar varje students poäng.
+    st_points = calculate_hp_per_student(
+        student_objects
+    )
+
     total_courses_cleared = {}
-    # Beräknar procentandelen av de obligatoriska poängen som varje student har klarat.
+
+    # Beräknar procentandel klarade poäng.
     for each_student in st_points:
-        points = (st_points[each_student] / tot_course_points) * 100
+
+        points = (
+            st_points[each_student] /
+            tot_course_points
+        ) * 100
+
         total_courses_cleared[each_student] = f"{points:.1f}%"
+
     print(f"Antal obligatoriska poäng: {tot_course_points}")
-    print("-"*32)
+    print("-" * 32)
+
     for student in total_courses_cleared:
-        print(f"{student} har klarat ", total_courses_cleared[student])
+
+        print(
+            f"{student} har klarat "
+            f"{total_courses_cleared[student]}"
+        )
+
 
 if __name__ == "__main__":
-    main() # Påbörjar programmet
-
-
-
-
-
-
+    main()
