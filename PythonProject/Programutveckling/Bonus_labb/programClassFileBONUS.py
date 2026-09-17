@@ -19,7 +19,7 @@ class Program:
         return self.program_id
 
     def add_mandatory_course(self, course):
-        """Lägger till en obligatorisk kurs till programmet."""
+        """Lägger till en kurs som är obligatorisk för programmet."""
         self.mandatory_courses.append(course)
 
 class TestProgramme(unittest.TestCase):

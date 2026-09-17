@@ -1,6 +1,5 @@
 import unittest
 
-
 class Student:
     """Representerar en student som hämtats från databasen.
     Klassen innehåller studentens ID och namn som attribut.
@@ -34,6 +33,10 @@ class ProgramStudent(Student):
     def add_course(self, course):
         """Lägger till en kurs som studenten har läst."""
         self.courses.append(course)
+
+    def get_program_id(self):
+        """Metod som returnerar studentens program-ID."""
+        return self.program.get_program_id()
 
 
 class TestStudent(unittest.TestCase):

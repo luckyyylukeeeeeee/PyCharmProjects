@@ -1,84 +1,183 @@
 from courseClassFileBONUS import Course
 from programClassFileBONUS import Program
-from studentClassFileBONUS import Student
-from queryingSqliteBONUS import get_course_registration, get_courses, get_students, get_ob_course, get_program
+from studentClassFileBONUS import ProgramStudent
+from queryingSqliteBONUS import (
+    get_course_registration,
+    get_courses,
+    get_students,
+    get_ob_course,
+    get_program)
+
+
+# Hämtar data från databasen
+student_data = get_students()
+course_data = get_courses()
+registration_objects = get_course_registration()
+ob_course_objects = get_ob_course()
+program_data = get_program()
+
+
+# Skapar Program-objekt
+program_objects = []
+
+for program in program_data:
+    program_object = Program(
+        program["id"],
+        program["program_name"])
+    program_objects.append(program_object)
+
+
+# Skapar Course-objekt
+course_objects = []
+
+for course in course_data:
+    course_object = Course(
+        course["course_id"],
+        course["course_name"],
+        course["hp"])
+    course_objects.append(course_object)
+
+
+# Skapar ProgramStudent-objekt
+student_objects = []
+
+for student in student_data:
+    for program in program_objects:
+        # Kontrollerar vilket program studenten tillhör
+        if student["program_id"] == program.get_program_id():
+            student_object = ProgramStudent(
+                student["student_id"],
+                student["name"],
+                program)
+            student_objects.append(student_object)
+
 
 def find_and_calculate_ob_course_points():
-    """Funktionens syfte är att hitta vilka kurser som är obligatoriska för vilka program,
-    samt räkna ut hur många hp poöng som just är obligatoriska för varje program.
-    :return Ett dictionary med varje programs och dess obligatoriska kurser (kurs_id) där nyckeln programnamnet
-    :return Ett dictiomary med varje program och hur många obligatoriska hp programmet innehåller
-    dör nyckeln är programnamnet.
+    """Funktionens syfte är att hitta vilka kurser som är obligatoriska
+    för vilka program, samt räkna ut hur många HP-poäng som är obligatoriska
+    för varje program.
+    :return: Ett dictionary med varje program och dess obligatoriska kurser
+    där nyckeln är programnamnet.
+    :return: Ett dictionary med varje program och hur många obligatoriska
+    HP programmet innehåller där nyckeln är programnamnet.
     """
-    ob_courses_for_programmes = {} #Dic för alla ob kurser per program
-    for each_prog in program_objects: #Loppar igenom programmen
-        ob_courses_for_programmes[each_prog.get_name()] = [] #Programmen blir nyckeln till en lista med ob kurser som data
-        for each_ob_course in ob_course_objects: #Loppar igenom ob kurserna
-            if each_ob_course.get_program_id() == each_prog.program_id: #Om ob program id är lika med program id från programmen
-                ob_courses_for_programmes[each_prog.get_name()].append(each_ob_course.get_course_id()) #Då lägger du till ob kursen i dic med programnamn som nyckel
-    programme_points = {} #Dic för hur många ob poöng varje program har
-    for programme, ob_courses in ob_courses_for_programmes.items(): #Hämtar nyckeln och dess data
-        total_hp = 0 #Nollställer hp räkningen för varje program
-        for each_ob_course in ob_courses: #Loppar igenom ob kurserna
-            for course in course_objects: #Loppar igenom alla kurserna
-                if course.get_course_id() == each_ob_course: #Om kurs kurs-id är like med ob kurs kurs-id
-                    total_hp += course.get_hp() #Plussa ihop alla dom hp poängen
-        programme_points[programme] = total_hp #Lägg till den total hp som data med varje programnamn som nyckel
-    return ob_courses_for_programmes, programme_points #Returnerar båda dictionaries
 
-#print(find_and_calculate_ob_course_points())
+    ob_courses_for_programmes = {}  # Dictionary för alla obligatoriska kurser per program
+    for each_prog in program_objects:  # Loopar igenom alla program
+        ob_courses_for_programmes[each_prog.get_name()] = []  # Programmet blir nyckel till en lista med ob-kurser
+        for each_ob_course in ob_course_objects:  # Loopar igenom alla obligatoriska kurser
+            # Kontrollerar om den obligatoriska kursen tillhör programmet
+            if each_ob_course["program_id"] == each_prog.get_program_id():
+                ob_courses_for_programmes[each_prog.get_name()].append(each_ob_course["kurs_id"])
+
+    programme_points = {}  # Dictionary för hur många obligatoriska HP varje program har
+    for programme, ob_courses in ob_courses_for_programmes.items():
+        total_hp = 0
+
+        for each_ob_course in ob_courses:  # Loopar igenom programmets obligatoriska kurser
+            for course in course_objects:  # Loopar igenom alla kursobjekt
+
+                # Kontrollerar om kursen är samma som den obligatoriska kursen
+                if course.get_course_id() == each_ob_course:
+                    total_hp += course.get_hp()
+
+        programme_points[programme] = total_hp
+
+    return ob_courses_for_programmes, programme_points
+
 
 def find_programme_students():
-    """Funktionens syfte är att hitta vilka kurser som är obligatoriska för vilka program,
-    samt räkna ut hur många hp poöng som just är obligatoriska för varje program.
-    :return Ett nested dictionary där programnamnet är första nyckeln och sen student namnet är andra nyckeln
-    med datan antal ob hp avklarade av just den specifika studenten. Typ såhär ser det ut:
-        {
-        ├────  'Media': {
-        │       ├── 'Eleven' : - Antal ob hp avklarade
-        │       ├── 'Steve' :    -||-
-        │       }
-        ├──── 'Data': {
-        │       ├── 'Mike' : - Antal ob hp avklarade
-        │       ├── 'Lucas':   -||-
-        │       ├── 'Nancy':   -||-
-                }
-        }
-    """
-    ob_courses_for_each_programme, _ = find_and_calculate_ob_course_points() #Hämtar ob kurserna i varje program
-    students_per_programme = {} #Dic för varje program
-    for programme in program_objects: #Loppar igenom programmen
-        students_per_programme[programme.get_name()] = {} #Programmen blir nyckeln till en dic med studenter som data
-        for each_student in student_objects: #Loppar igenom studenterna
-            if each_student.get_programe_id() == programme.get_program_id(): #Om studentens program id är lika med program id från programmen
-                students_per_programme[programme.get_name()][each_student.get_name()] = 0 #Studenten blir nyckeln till 0 hp som data
-                for each_reg_course in registration_objects: #Loppar igenom kursregistreringarna
-                    if each_reg_course.get_student_id() == each_student.get_student_id(): #Om studentens id är lika med student id från kursregistreringen
-                        for each_course in course_objects: #Loppar igenom alla kurserna
-                            if each_reg_course.get_course_id() == each_course.get_course_id(): #Om kurs-id är lika med kurs-id från kursregistreringen
-                                for each_ob_c_id in ob_courses_for_each_programme[programme.get_name()]: #Loppar igenom ob kurserna för programmet
-                                    if each_course.get_course_id() == each_ob_c_id: #Om kurs-id är lika med ob kursens kurs-id
-                                        students_per_programme[programme.get_name()][each_student.get_name()] += each_course.get_hp() #Plussa ihop alla dom avklarade ob hp poängen
-    return students_per_programme #Returnerar dictionaryn med program, studenter och avklarade ob hp
+    """Funktionens syfte är att hitta vilka kurser som är obligatoriska
+    för vilka program, samt räkna ut hur många obligatoriska HP-poäng
+    varje specifik student har klarat.
 
-#print(find_programme_students())
+    :return: Ett nested dictionary där programnamnet är första nyckeln
+    och sedan studentnamnet är andra nyckeln med datan antal obligatoriska
+    HP avklarade av just den specifika studenten.
+
+    Typ såhär ser det ut:
+
+    {
+        'Medieteknik': {
+            'Eleven': - Antal obligatoriska HP avklarade,
+            'Steve':  -||-
+        },
+
+        'Datateknik': {
+            'Mike':  - Antal obligatoriska HP avklarade,
+            'Lucas': -||-
+            'Nancy': -||-
+        }
+    }
+    """
+
+    ob_courses_for_each_programme, _ = find_and_calculate_ob_course_points()
+
+    students_per_programme = {}
+
+    for programme in program_objects:  # Loopar igenom alla program
+        students_per_programme[programme.get_name()] = {}
+
+        for each_student in student_objects:  # Loopar igenom alla studenter
+
+            # Kontrollerar om studenten tillhör det aktuella programmet
+            if each_student.get_program_id() == programme.get_program_id():
+
+                students_per_programme[
+                    programme.get_name()
+                ][each_student.get_name()] = 0
+
+                for each_reg_course in registration_objects:  # Loopar igenom alla kursregistreringar
+
+                    # Kontrollerar om kursregistreringen tillhör studenten
+                    if each_reg_course["student_id"] == each_student.get_student_id():
+
+                        for each_course in course_objects:  # Loopar igenom alla kurser
+
+                            # Kontrollerar om kursregistreringen gäller den aktuella kursen
+                            if each_reg_course["kurs_id"] == each_course.get_course_id():
+
+                                for each_ob_c_id in ob_courses_for_each_programme[
+                                    programme.get_name()
+                                ]:  # Loopar igenom programmets obligatoriska kurser
+
+                                    # Kontrollerar om kursen är obligatorisk för studentens program
+                                    if each_course.get_course_id() == each_ob_c_id:
+
+                                        students_per_programme[
+                                            programme.get_name()
+                                        ][each_student.get_name()] += each_course.get_hp()
+
+    return students_per_programme
+
 
 def main():
-    """Beräknar hur stor andel av programmets obligatoriska hp som
+    """Beräknar hur stor andel av programmets obligatoriska HP som
     varje student har klarat och skriver ut resultatet.
+
     :return: Ett dictionary med program som nyckel och studenter med
-    deras % andel av avklarade obligatoriska hp som data.
+    deras procentuella andel av avklarade obligatoriska HP som data.
     """
-    get_programmes = find_programme_students() #Hämtar studenterna och deras avklarade ob hp för varje program
-    _, programme_points = find_and_calculate_ob_course_points() #Hämtar den totala mängden ob hp för varje program
-    for programme, students in get_programmes.items(): #Loppar igenom programmen och dess studenter
-        print(f"{programme}:") #Skriver ut programmets namn
-        for each_person, hp in students.items(): #Loppar igenom studenterna och deras avklarade ob hp
-            points = (hp / programme_points[programme]) * 100 #Räknar ut studentens procentuella andel av programmets ob hp
-            students[each_person] = f"{points:.1f}%" #Byter ut studentens hp mot den procentuella andelen
-            print (f"  {each_person} {students[each_person]}") #Skriver ut studentens namn och procentuella andel
-    return get_programmes #Returnerar dictionaryn med program, studenter och deras procentuella andel
+
+    get_programmes = find_programme_students()
+    _, programme_points = find_and_calculate_ob_course_points()
+
+    for programme, students in get_programmes.items():  # Loopar igenom alla program
+        print(f"{programme}:")
+
+        for each_person, hp in students.items():  # Loopar igenom alla studenter på programmet
+
+            # Räknar ut hur stor andel av de obligatoriska HP studenten klarat
+            points = (hp / programme_points[programme]) * 100
+
+            # Ersätter antalet HP med studentens procentuella resultat
+            students[each_person] = f"{points:.1f}%"
+
+            print(f"  {each_person}: {students[each_person]}")
+
+    return get_programmes
+
 
 if __name__ == "__main__":
-    main() # Påbörjar programmet
+    main()  # Påbörjar programmet
 
