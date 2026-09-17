@@ -1,14 +1,7 @@
-from courseFile import create_course_objects
-from courseRegiFile import create_registration_objects
-from programFile import create_program_objects
-from studentFile import create_student_objects
-from obcourseFile import create_ob_course_objects
-
-student_objects = create_student_objects() #Kallar på funktionen som skapar objekten från studentClassFile
-course_objects = create_course_objects() #Kallar på funktionen som skapar objekten från coursesClassFile
-registration_objects = create_registration_objects() #Kallar på funktionen som skapar objekten från courseRegFile
-program_objects = create_program_objects() #Kallar på funktionen som skapar objekten från programFile
-ob_course_objects = create_ob_course_objects() #Kallar på funktionen som skapar objekten från obcourseFile
+from courseClassFileBONUS import Course
+from programClassFileBONUS import Program
+from studentClassFileBONUS import Student
+from queryingSqliteBONUS import get_course_registration, get_courses, get_students, get_ob_course, get_program
 
 def find_and_calculate_ob_course_points():
     """Funktionens syfte är att hitta vilka kurser som är obligatoriska för vilka program,

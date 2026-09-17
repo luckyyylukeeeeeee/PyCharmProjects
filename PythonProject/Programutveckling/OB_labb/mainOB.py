@@ -1,6 +1,6 @@
-from studentClassFile import MediaStudent
-from coursesClassFile import Course
-from queryingSqlite import get_students, get_courses, get_registrations
+from studentClassFileOB import MediaStudent
+from coursesClassFileOB import Course
+from queryingSqliteOB import get_students, get_courses, get_registrations
 
 def create_student_objects():
     """Skapar MediaStudent-objekt från databasen."""
