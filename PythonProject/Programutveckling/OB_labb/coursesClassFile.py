@@ -26,21 +26,6 @@ class Course:
         """Metod som returnerar kursen hp."""
         return self.hp
 
-def create_course_objects():
-    """Skapar Course objekt utifrån informationen från databasen.
-    :return: En lista med Course objekt.
-    """
-    course_object_list = []
-    for each_course in course_list:
-        course_object = Course(
-            course_id=each_course["course_id"],
-            course_code=each_course["course_code"],
-            course_name=each_course["course_name"],
-            hp=each_course["hp"]
-        )
-        course_object_list.append(course_object)
-    return course_object_list
-
 class TestStudent(unittest.TestCase):
     """Testar att Course klassen skapar objekt med rätt course_id, course_code, course_name och hp."""
     def test_student(self):

@@ -19,7 +19,6 @@ class Student:
 
 class MediaStudent(Student):
     """Representerar en student på Medieteknik.
-
     MediaStudent är en subklass till Student och
     innehåller även en lista över studentens klarade kurser.
     """
@@ -44,7 +43,6 @@ class TestStudent(unittest.TestCase):
         """Kontrollerar att Student skapas med rätt information."""
 
         student = Student(7, "Dave")
-
         self.assertEqual(student.get_student_id(), 7)
         self.assertEqual(student.get_name(), "Dave")
 
