@@ -63,10 +63,10 @@ def find_and_calculate_ob_course_points():
     for programme, ob_courses in ob_courses_for_programmes.items():
         total_hp = 0
         for each_ob_course in ob_courses:  # Loopar igenom programmets obligatoriska kurser
-            for course in course_objects:  # Loopar igenom alla kursobjekt
+            for each_course in course_objects:  # Loopar igenom alla kursobjekt
                 # Kontrollerar om kursen är samma som den obligatoriska kursen
-                if course.get_course_id() == each_ob_course:
-                    total_hp += course.get_hp()
+                if each_course.get_course_id() == each_ob_course:
+                    total_hp += each_course.get_hp()
         programme_points[programme] = total_hp
     return ob_courses_for_programmes, programme_points
 
